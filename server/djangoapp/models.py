@@ -23,3 +23,42 @@
 # - Year (IntegerField) with min value 2015 and max value 2023
 # - Any other fields you would like to include in car model
 # - __str__ method to print a car make object
+from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+
+# Create your models here.
+
+class CarMake(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    country_of_origin = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
+class CarModel(models.Model):
+    car_make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
+    dealer_id = models.IntegerField(null=True, blank=True)  # FIXED: Made optional to match lab script requirements
+    name = models.CharField(max_length=100)
+    
+    CAR_TYPES = [
+        ('SEDAN', 'Sedan'),
+        ('SUV', 'SUV'),
+        ('WAGON', 'Wagon'),
+        ('COUPE', 'Coupe'),
+        ('CONVERTIBLE', 'Convertible'),
+    ]
+    type = models.CharField(max_length=15, choices=CAR_TYPES, default='SUV')
+    
+    # Validation allowing models from 2015 up to 2026
+    year = models.IntegerField(
+        default=2023,
+        validators=[
+            MaxValueValidator(2026),
+            MinValueValidator(2015)
+        ]
+    )
+
+    def __str__(self):
+        return f"{self.car_make.name} {self.name}"

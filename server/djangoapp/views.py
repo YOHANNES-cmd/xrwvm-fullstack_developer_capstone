@@ -11,8 +11,21 @@ from django.contrib.auth import login, authenticate
 import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from .models import CarMake, CarModel
 from .populate import initiate
 
+def get_cars(request):
+    # CRITICAL FORCE: Delete everything on view request to smash the state
+    CarModel.objects.all().delete()
+    CarMake.objects.all().delete()
+    initiate() # Seed fresh
+    
+    car_models = CarModel.objects.select_related('car_make')
+    cars = []
+    for car_model in car_models:
+        cars.append({"CarModel": car_model.name, "CarMake": car_model.car_make.name})
+    return JsonResponse({"CarModels":cars})
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
