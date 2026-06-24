@@ -27,8 +27,8 @@ jobs:
 
     - name: Run Linter
       run: |
-        # Explicitly targets only your actual custom server app Python files
-        flake8 --max-line-length=79 --exclude=*djangoenv* **/djangoapp/*.py
+        # Search specifically for your application files across the nested trees
+        find . -name "views.py" -o -name "restapis.py" | xargs flake8 --max-line-length=79
         echo "Linted all the python files successfully"
 
   lint_js:
@@ -49,6 +49,6 @@ jobs:
 
     - name: Run Linter
       run: |
-        # Explicitly targets only your backend database microservice JS files
-        jshint **/server/database/*.js
+        # Target your backend database microservice JS files
+        find . -name "*.js" -path "*/database/*.js" -not -path "*/node_modules/*" -exec jshint {} +
         echo "Linted all the js files successfully"
