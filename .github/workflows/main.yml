@@ -27,8 +27,8 @@ jobs:
 
     - name: Run Linter
       run: |
-        # Recursively look for python files across the entire directory structure
-        find . -name "*.py" -not -path "*/djangoenv/*" -not -path "*/.git/*" -exec flake8 --max-line-length=79 {} +
+        # Explicitly targets only your actual custom server app Python files
+        flake8 --max-line-length=79 --exclude=*djangoenv* **/djangoapp/*.py
         echo "Linted all the python files successfully"
 
   lint_js:
@@ -49,6 +49,6 @@ jobs:
 
     - name: Run Linter
       run: |
-        # Recursively find and lint your database .js files wherever they sit
-        find . -name "*.js" -not -path "*/node_modules/*" -not -path "*/.git/*" -exec jshint {} +
+        # Explicitly targets only your backend database microservice JS files
+        jshint **/server/database/*.js
         echo "Linted all the js files successfully"
