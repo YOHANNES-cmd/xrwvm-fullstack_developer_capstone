@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .models import CarMake, CarModel
 from .populate import initiate
-from .restapis import get_request, analyze_review_sentiments
+from .restapis import get_request, analyze_review_sentiments, post_review
 
 def get_cars(request):
     # CRITICAL FORCE: Delete everything on view request to smash the state
@@ -129,6 +129,7 @@ def get_dealer_details(request, dealer_id):
         return JsonResponse({"status":400,"message":"Bad Request"})
 
 # Create get_dealer_reviews method which takes the dealer_id as a parameter
+# Create get_dealer_reviews method which takes the dealer_id as a parameter
 def get_dealer_reviews(request, dealer_id):
     # if dealer id has been provided
     if(dealer_id):
@@ -136,19 +137,28 @@ def get_dealer_reviews(request, dealer_id):
         reviews = get_request(endpoint)
         for review_detail in reviews:
             response = analyze_review_sentiments(review_detail['review'])
-            print(response)
-            review_detail['sentiment'] = response['sentiment']
+            
+            # Properly align the if/else checks inside the loop
+            if response is not None and 'sentiment' in response:
+                review_detail['sentiment'] = response['sentiment']
+            else:
+                review_detail['sentiment'] = "neutral"  # Fallback baseline
+                
         return JsonResponse({"status":200,"reviews":reviews})
     else:
         return JsonResponse({"status":400,"message":"Bad Request"})
 @csrf_exempt
 def add_review(request):
-    if(request.user.is_anonymous == False):
-        data = json.loads(request.body)
+    if request.method == "POST":
         try:
+            data = json.loads(request.body)
+            # Make sure this calls post_review, NOT post_request
             response = post_review(data)
-            return JsonResponse({"status":200})
-        except:
-            return JsonResponse({"status":401,"message":"Error in posting review"})
+            return JsonResponse({"status": 200, "message": "Review posted successfully"})
+        except Exception as err:
+            print(f"Error in posting review: {err}")
+            return JsonResponse({"status": 401, "message": "Error in posting review"})
     else:
-        return JsonResponse({"status":403,"message":"Unauthorized"})
+        return JsonResponse({"status": 400, "message": "Bad Request"})
+
+

@@ -1,4 +1,6 @@
-from .models import CarMake, CarModel
+#  Correct import
+from djangoapp.models import CarMake, CarModel
+
 
 def initiate():
     car_make_data = [

@@ -30,6 +30,8 @@ DEBUG = True
 
 #ALLOWED_HOSTS = ['localhost','https://yohanneskonk-8000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai']
 #CSRF_TRUSTED_ORIGINS = ['https://yohanneskonk-8000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/','https://yohanneskonk-8000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai','https://yohanneskonk-8000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai']
+# Add or update these lines at the bottom of settings.py
+CORS_ALLOW_CREDENTIALS = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
@@ -40,7 +42,10 @@ ALLOWED_HOSTS = [
 # FIXED: Removed the trailing slash '/' out of CSRF_TRUSTED_ORIGINS paths
 CSRF_TRUSTED_ORIGINS = [
     'https://yohanneskonk-8000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai',
-    'https://yohanneskonk-8000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai'
+    'https://yohanneskonk-8000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai',
+    'https://*.proxy.cognitiveclass.ai',
+    'http://localhost:3000',
+    'http://127.0.0.1:8000'
 ]
 
 REST_FRAMEWORK = {
